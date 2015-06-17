@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+
+	<title>Yahoo Weather Bad Link Work-Around</title>
+
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+</head>
+<body>
+	<h3 id="title"></h3>
+	<div id="forecast"></div>
+
+	<script type="text/javascript">
+		$(document).ready(function ()
+		{
+			Weather("94027 US");
+		});
+
+		function Weather(zip)
+		{
+			var settings =
+				{
+					cache: false,
+					dataType: "jsonp",
+					error: function (jqXHR, status, error)
+					{
+						alert(error);
+					},
+					success: function (data, status, jqXHR)
+					{
+						var country, region, city, woeid;
+
+						try 
+						{
+							country = "/" + data.query.results.place.country.content;
+						}
+						catch (thrown)
+						{
+						}
+
+						try
+						{
+							region = "/" + data.query.results.place.admin1.content;
+						}
+						catch (thrown)
+						{
+						}
+
+						try
+						{
+							city = "/" + data.query.results.place.locality1.content;
+						}
+						catch (thrown)
+						{
+						}
+
+						try
+						{
+							woeid = data.query.results.place.woeid;
+						}
+						catch (thrown)
+						{
+						}
+						if (country)
+						{
+							country = country.replace(" ", "-").toLowerCase();
+						}
+
+						if (region)
+						{
+							region = region.replace(" ", "-").toLowerCase();
+						}
+
+						if (city)
+						{
+							city = city.replace(" ", "-").toLowerCase();
+						}
+
+						var settings =
+							{
+								cache: false,
+								dataType: "jsonp",
+								error: function (jqXHR, status, error)
+								{
+									alert(error);
+								},
+								success: function (data, status, jqXHR)
+								{
+									var content = data.query.results.channel.item.description;
+
+									if (content)
+									{
+										if (!city)
+										{
+											city = "/" + data.query.results.channel.location.city;
+
+											city = city.replace(" ", "-").toLowerCase();
+										}
+
+										var newLink = "http://weather.yahoo.com" + country + region + city;
+										var badLink = data.query.results.channel.item.link;
+
+										if ((badLink) && (newLink))
+										{
+											content = content.replace(badLink, newLink);
+										}
+
+										$("#title").text(data.query.results.channel.item.title);
+										$("#forecast").html(content);
+									}
+								},
+								url: "https://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid = '" + woeid + "'&format=json&diagnostics=true"
+							};
+
+						$.ajax(settings);
+					},
+					url: "https://query.yahooapis.com/v1/public/yql?q=select * from geo.places where text = '" + zip + "'&format=json&diagnostics=true"
+				};
+
+			$.ajax(settings);
+		}
+	</script>
+</body>
+</html>
