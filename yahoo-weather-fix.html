@@ -122,11 +122,13 @@
 
 	<div style="display: none;">
 		<svg height="60px" width="30px">
-			<polygon fill="silver" stroke-width="0" points="0,30 30,0 30,10 10,30 30,50 30,60" />
+			<polygon fill="silver" stroke-width="0" points="0,30 30,0 30,10 10,30 30,50 30,60">
+			</polygon>
 		</svg>
 
 		<svg height="30px" width="15px">
-			<polygon fill="silver" stroke-width="0" points="0,15 15,0 15,5 5,15 15,25 15,30" />
+			<polygon fill="silver" stroke-width="0" points="0,15 15,0 15,5 5,15 15,25 15,30">
+			</polygon>
 		</svg>
 	</div>
 
@@ -251,6 +253,8 @@
 										{
 											content = content.replace(badLink, newLink);
 										}
+
+										content = content.replace("href=", "target='_blank' href=");
 
 										$("#" + destination + " > h3").text(data.query.results.channel.item.title);
 										$("#" + destination + " > p").html(content);
